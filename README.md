@@ -1,4 +1,4 @@
 Coldfusion-jqDataTables
 =======================
 
-Coldfusion CFC for server-side processing functionality for jQuery DataTables.
+Coldfusion CFC to handle server side processing of jQuery DataTables.
