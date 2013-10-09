@@ -1,6 +1,4 @@
-<cfcomponent displayname="Ajax" hint="Global Ajax Handling" output="no">
-	<cfset this.DataTables = CreateObject("component", "DataTables")>
-
+<cfcomponent displayname="dtAjax" hint="DataTables Ajax Handling" output="no" extends="DataTables">
 	<cffunction name="jqdtExample" access="remote" returnformat="json" output="no">
 		<cfset var args = StructCopy((StructIsEmpty(form) ? url : form))>
 		<cfset var k = "">		
@@ -8,8 +6,8 @@
 		<cfset args.ci = ["","FooID", "BarType", "BarDate", "BarName"]>
 		<cfset args.View = "view_FooBar">
 		<cfset args.PK = "FooID">		
-		<cfset args = this.DataTables.jqdtParseFilter(arguments, args)>
+		<cfset args = super.jqdtParseFilter(arguments, args)>
 		
-		<cfreturn this.DataTables.jqdtCall(argumentCollection=args)>
+		<cfreturn super.jqdtCall(argumentCollection=args)>
 	</cffunction>
 </cfcomponent>
