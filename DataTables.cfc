@@ -1,5 +1,5 @@
 <cfcomponent displayname="DataTables" hint="Handle DataTables Processing" output="no">
-	<cffunction name="jqdtCall" access="remote" returnformat="json" output="no">
+	<cffunction name="jqdtCall" access="public" returnformat="json" output="no">
 		<cfargument name="iDisplayStart" required="yes" hint="Display start point in the current data set.">
 		<cfargument name="iDisplayLength" required="yes" hint="Number of records that the table can display in the current draw. It is expected that the number of records returned will be equal to this number, unless the server has fewer records to return.">
 		<cfargument name="iColumns" required="yes" hint="Number of columns being displayed (useful for getting individual column search info)">
