@@ -1,7 +1,7 @@
 Coldfusion-jqDataTables
 =======================
 
-Coldfusion CFC to handle server side processing of jQuery DataTables.
+Coldfusion(9+) CFC to handle server side processing of jQuery DataTables.
 
 ####DataTables.cfc####
 * jqdtCall - The main function that handles the parsing and building of the JSON response for DataTables.
