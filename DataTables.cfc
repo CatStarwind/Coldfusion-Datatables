@@ -20,6 +20,7 @@
 		<cfset var qryMain = QueryNew('')>
 		<cfset var qryTotal = QueryNew('')>
 		<cfset var i = 0>
+		<cfset var x = 0>
 		<cfset var c = 0>
 		<cfset var cr = 1>
 		<cfset var filter = true>
