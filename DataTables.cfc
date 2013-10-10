@@ -1,5 +1,5 @@
 <cfcomponent displayname="DataTables" hint="Handle DataTables Processing" output="no">
-	<cffunction name="jqdtCall" access="public" returnformat="json" output="no">
+	<cffunction name="jqdtCall" access="public" returnformat="json" returntype="struct" output="no">
 		<cfargument name="iDisplayStart" required="yes" hint="Display start point in the current data set.">
 		<cfargument name="iDisplayLength" required="yes" hint="Number of records that the table can display in the current draw. It is expected that the number of records returned will be equal to this number, unless the server has fewer records to return.">
 		<cfargument name="iColumns" required="yes" hint="Number of columns being displayed (useful for getting individual column search info)">
@@ -11,6 +11,8 @@
 		<cfargument name="view" required="yes" hint="SQL View">
 		<cfargument name="pk" required="yes" hint="Primary Key">
 		<cfargument name="where" required="yes" hint="WHERE clause filter">
+		<cfargument name="ext" required="no" hint="Extra column data to be returned inside aData.ext">
+
 		<cfset var jqdt = StructNew()>		
 		<cfset var arg = "">
 		<cfset var k = "">
@@ -128,7 +130,15 @@
 			<cfloop from="1" to="#ArrayLen(arguments.mDataProp)#" index="i">
 				<cfset row[i-1] = (arguments.mDataProp[i] NEQ '' ? qryMain[arguments.mDataProp[i]][CurrentRow] : '')>
 			</cfloop>
-			<cfset row["DT_RowId"] = arguments.PK&"_"&Evaluate(arguments.PK)>
+			<cfset row["DT_RowId"] = arguments.PK&"_"&qryMain[arguments.PK][CurrentRow]>
+
+			<cfif StructKeyExists(arguments, "ext")>
+				<cfset row["ext"] = StructNew()>
+				<cfloop array="#arguments.ext#" index="k">
+					<cfset row["ext"][k] = qryMain[k][CurrentRow]>
+				</cfloop>
+			</cfif>
+
 			<cfset ArrayAppend(jqdt["aaData"],row)>
 		</cfoutput>
 
