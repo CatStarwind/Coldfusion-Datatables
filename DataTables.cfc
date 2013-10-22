@@ -66,6 +66,7 @@
 						</cfloop>
 					</cfif>) AS R<cfif !ArrayFind(ci, arguments.PK)>, #arguments.PK#</cfif>
 					, [#ArrayToList(ListToArray(ArrayToList(ci)), '],[')#]
+					, [#ArrayToList(arguments.ext, '],[')#]
 				FROM #arguments.view#
 				<cfif arguments.sSearchG NEQ "" OR StructCount(arguments.where)>
 				WHERE
@@ -73,7 +74,7 @@
 					(
 						<cfset x = 0>
 						<cfloop from="1" to="#ArrayLen(arguments.mDataProp)#" index="i">
-						<cfif arguments.bSearchable[i]>
+						<cfif arguments.bSearchable[i] AND arguments.mDataProp[i] NEQ ''>
 							<cfif x++>OR</cfif> [#arguments.mDataProp[i]#] LIKE @gSrch
 						</cfif>					
 						</cfloop>
@@ -105,7 +106,7 @@
 				(
 					<cfset x = 0>
 					<cfloop from="1" to="#ArrayLen(arguments.mDataProp)#" index="i">
-					<cfif arguments.bSearchable[i]>
+					<cfif arguments.bSearchable[i] AND arguments.mDataProp[i] NEQ ''>
 						<cfif x++>OR</cfif> [#arguments.mDataProp[i]#] LIKE @gSrch
 					</cfif>					
 					</cfloop>
