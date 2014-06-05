@@ -37,18 +37,16 @@
 		<cfloop collection="#arguments#" item="arg">
 			<cfif ListLen(arg, '_') EQ 2>
 				<cfset k = ListFirst(arg, '_')>
-				<cfset v = ListLast(arg, '_')+1>
-								
-				<cfif NOT StructKeyExists(arguments, k)>
-					<cfset arguments[k] = ArrayNew(1)>
-				</cfif>
+				<cfset v = ListLast(arg, '_')+1>								
+				<cfif NOT StructKeyExists(arguments, k)><cfset arguments[k] = ArrayNew(1)></cfif>				
 				<cfset arguments[k][v] = arguments[arg]>
 				<cfset StructDelete(arguments, arg)>		
 			</cfif>
 		</cfloop>
 		<cfloop from="1" to="#ArrayLen(arguments.mDataProp)#" index="i">
 			<cfset arguments.mDataProp[i] = arguments.ci[i]>
-		</cfloop>
+		</cfloop>		
+		
 
 		<!--- Get --->
 		<cfquery name="qryMain" datasource="#application.datasource#">
@@ -64,11 +62,11 @@
 								<cfif i GT 1>,</cfif> #arguments.mDataProp[c]# #arguments.sSortDir[i]#
 							</cfif>
 						</cfloop>
-					</cfif>) AS R<cfif !ArrayFind(ci, arguments.PK)>, #arguments.PK#</cfif>
+					</cfif>) AS R<cfif !(ci.indexOf(arguments.PK)+1)>, #arguments.PK#</cfif>
 					, [#ArrayToList(ListToArray(ArrayToList(ci)), '],[')#]
-					, [#ArrayToList(arguments.ext, '],[')#]
+					
 				FROM #arguments.view#
-				<cfif arguments.sSearchG NEQ "" OR StructCount(arguments.where)>
+				<cfif arguments.sSearchG NEQ "" OR StructCount(arguments.where) OR ArrayLen(ListToArray(ArrayToList(arguments.sSearch)))>
 				WHERE
 					<cfif arguments.sSearchG NEQ "">
 					(
@@ -78,8 +76,17 @@
 							<cfif x++>OR</cfif> [#arguments.mDataProp[i]#] LIKE @gSrch
 						</cfif>					
 						</cfloop>
-					)
+					) <cfif ArrayLen(ListToArray(ArrayToList(arguments.sSearch)))>AND</cfif>
 					</cfif>
+					
+					<cfset x = 0>
+					<cfloop from="1" to="#ArrayLen(arguments.sSearch)#" index="i">						
+						<cfif arguments.sSearch[i] NEQ "">							
+							<cfif x++>AND</cfif>
+							([#arguments.mDataProp[i]#] = <cfqueryparam value="#arguments.sSearch[i]#">)
+						</cfif>
+					</cfloop>
+					
 					<cfset i = 0>
 					<cfloop collection="#arguments.where#" item="k">
 						<cfif arguments.sSearchG NEQ "" OR i++>AND</cfif>
@@ -100,7 +107,7 @@
 			
 			SELECT COUNT(#arguments.PK#) AS TotalFiltered, (SELECT COUNT(#arguments.PK#) AS Total FROM #arguments.view#) AS Total
 			FROM #arguments.view#
-			<cfif arguments.sSearchG NEQ "" OR StructCount(arguments.where)>
+			<cfif arguments.sSearchG NEQ "" OR StructCount(arguments.where) OR ArrayLen(ListToArray(ArrayToList(arguments.sSearch)))>
 			WHERE
 				<cfif arguments.sSearchG NEQ "">
 				(
@@ -110,8 +117,17 @@
 						<cfif x++>OR</cfif> [#arguments.mDataProp[i]#] LIKE @gSrch
 					</cfif>					
 					</cfloop>
-				)
+				) <cfif ArrayLen(ListToArray(ArrayToList(arguments.sSearch)))>AND</cfif>
 				</cfif>
+				
+				<cfset x = 0>
+				<cfloop from="1" to="#ArrayLen(arguments.sSearch)#" index="i">
+					<cfif arguments.sSearch[i] NEQ "">							
+						<cfif x++>AND</cfif>
+						([#arguments.mDataProp[i]#] = <cfqueryparam value="#arguments.sSearch[i]#">)
+					</cfif>
+				</cfloop>
+				
 				<cfset i = 0>
 				<cfloop collection="#arguments.where#" item="k">
 					<cfif arguments.sSearchG NEQ "" OR i++>AND</cfif>
@@ -130,7 +146,7 @@
 		<cfoutput query="qryMain">
 			<cfset row = StructNew()>
 			<cfloop from="1" to="#ArrayLen(arguments.mDataProp)#" index="i">
-				<cfset row[i-1] = (arguments.mDataProp[i] NEQ '' ? qryMain[arguments.mDataProp[i]][CurrentRow] : '')>
+				<cfset row[i-1] = IIF(arguments.mDataProp[i] NEQ '' , "qryMain[arguments.mDataProp[i]][CurrentRow]", '')>
 			</cfloop>
 			<cfset row["DT_RowId"] = arguments.PK&"_"&qryMain[arguments.PK][CurrentRow]>
 
@@ -156,7 +172,7 @@
 			<cfif ListLen(k, '_') GT 1 AND ListGetAt(k, 1, '_') EQ "filter">
 				<cfif arguments.initArgs[k] NEQ ''>
 					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["val"] = arguments.initArgs[k]>
-					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["op"] = (ListLen(k, '_') EQ 3 AND ListGetAt(k, 3, '_') EQ "ex" ? "!=" : "=")>
+					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["op"] = IIF(ListLen(k, '_') EQ 3 AND ListGetAt(k, 3, '_') EQ "ex", DE("!="), DE("="))>
 				</cfif>
 				<cfset StructDelete(arguments.procArgs, k)>
 			</cfif>
