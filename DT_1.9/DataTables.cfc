@@ -1,5 +1,5 @@
 <cfcomponent displayname="DataTables" hint="Handle DataTables Processing" output="no">
-	<cffunction name="jqdtCall" access="public" returnformat="json" returntype="struct" output="no">
+<cffunction name="jqdtCall" access="public" returnformat="json" returntype="struct" output="no">
 		<cfargument name="iDisplayStart" required="yes" hint="Display start point in the current data set.">
 		<cfargument name="iDisplayLength" required="yes" hint="Number of records that the table can display in the current draw. It is expected that the number of records returned will be equal to this number, unless the server has fewer records to return.">
 		<cfargument name="iColumns" required="yes" hint="Number of columns being displayed (useful for getting individual column search info)">
@@ -172,7 +172,7 @@
 			<cfif ListLen(k, '_') GT 1 AND ListGetAt(k, 1, '_') EQ "filter">
 				<cfif arguments.initArgs[k] NEQ ''>
 					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["val"] = arguments.initArgs[k]>
-					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["op"] = IIF(ListLen(k, '_') EQ 3 AND ListGetAt(k, 3, '_') EQ "ex", DE("!="), DE("="))>
+					<cfset arguments.procArgs.where[ListGetAt(k, 2, '_')]["op"] = (ListLen(k, '_') EQ 3 AND ListGetAt(k, 3, '_') EQ "ex" ? "!=" : "=")>
 				</cfif>
 				<cfset StructDelete(arguments.procArgs, k)>
 			</cfif>
