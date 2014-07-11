@@ -2,12 +2,12 @@ Coldfusion-DataTables
 =======================
 
 Coldfusion(9+) CFC to handle server side processing of jQuery DataTables.
-##DataTables v1.10.x##
+##DataTables v1.10.x (DT_1.10)##
 #####DataTables.cfc####
 #####DTCalls.cfc####
 #####Functions.cfc####
 
-##DataTables v1.9.x##
+##DataTables v1.9.x (DT_1.9)##
 #####DataTables.cfc#####
 * jqdtCall - The main function that handles the parsing and building of the JSON response for DataTables.
 * jqdtParseFilter - The helper method to handle situations where you would want to filter out data manually (e.g. A dropdown selection)
