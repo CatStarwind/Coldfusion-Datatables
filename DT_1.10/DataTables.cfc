@@ -39,11 +39,11 @@
 					<cfif ArrayLen(arguments.ext)>, [#ArrayToList(ListToArray(ArrayToList(arguments.ext)), '],[')#]</cfif>
 					
 				FROM #arguments.view#				
-				WHERE 1=1
-					<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
+				<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
+					WHERE
+						<cfset x = 0>
 						<cfif arguments.search.value NEQ "">
-						AND (
-							<cfset x = 0>
+						(
 							<cfloop from="1" to="#ArrayLen(arguments.ci)#" index="i">
 							<cfif arguments.columns[i-1].searchable AND arguments.ci[i] NEQ ''>
 								<cfif x++>OR</cfif> [#arguments.ci[i]#] LIKE @gSrch
@@ -52,24 +52,22 @@
 						)
 						</cfif>
 						
-						<cfset i = 0>
 						<cfloop array="#arguments.where#" index="c">
-							AND 
+							<cfif x++>AND</cfif>
 								<cfif c["val"] NEQ 0>
 								#c.col# #c.op# <cfqueryparam value="#c.val#">
 								<cfelse>
 								#c.col# IS NULL
 								</cfif>
 						</cfloop>
+				</cfif>					
+				<cfset x = 0>
+				<cfloop collection="#columns#" item="k">
+					<cfif columns[k].search.value NEQ ''>
+						<cfif (arguments.search.value NEQ "" OR ArrayLen(arguments.where)) OR x++>AND<cfelse>WHERE</cfif>
+						(#arguments.ci[k+1]# = <cfqueryparam value="#columns[k].search.value#">)
 					</cfif>
-					
-					<cfset x = 0>
-					<cfloop collection="#columns#" item="k">
-						<cfif columns[k].search.value NEQ ''>
-							<cfif (arguments.search.value NEQ "" OR StructCount(arguments.where)) OR x++>AND</cfif>
-							(#arguments.ci[k+1]# = <cfqueryparam value="#columns[k].search.value#">)
-						</cfif>
-					</cfloop>
+				</cfloop>
 			) Q
 			WHERE R > <cfqueryparam value="#arguments.start#" cfsqltype="cf_sql_integer">
 			ORDER BY R
@@ -80,37 +78,35 @@
 			
 			SELECT COUNT(#arguments.PK#) AS TotalFiltered, (SELECT COUNT(#arguments.PK#) AS Total FROM #arguments.view#) AS Total
 			FROM #arguments.view#
-			WHERE 1=1
-					<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
-						<cfif arguments.search.value NEQ "">
-						AND (
-							<cfset x = 0>
-							<cfloop from="1" to="#ArrayLen(arguments.ci)#" index="i">
-							<cfif arguments.columns[i-1].searchable AND arguments.ci[i] NEQ ''>
-								<cfif x++>OR</cfif> [#arguments.ci[i]#] LIKE @gSrch
-							</cfif>					
-							</cfloop>
-						)
-						</cfif>
-
-						<cfset i = 0>
-						<cfloop array="#arguments.where#" index="c">
-							AND 
-								<cfif c["val"] NEQ 0>
-								#c.col# #c.op# <cfqueryparam value="#c.val#">
-								<cfelse>
-								#c.col# IS NULL
-								</cfif>
-						</cfloop>
-					</cfif>
-					
-					<cfset x = 0>
-					<cfloop collection="#columns#" item="k">
-						<cfif columns[k].search.value NEQ ''>
-							<cfif (arguments.search.value NEQ "" OR StructCount(arguments.where)) OR x++>AND</cfif>
-							(#arguments.ci[k+1]# = <cfqueryparam value="#columns[k].search.value#">)
-						</cfif>
+			<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
+			WHERE
+				<cfset x = 0>
+				<cfif arguments.search.value NEQ "">
+				(
+					<cfloop from="1" to="#ArrayLen(arguments.ci)#" index="i">
+					<cfif arguments.columns[i-1].searchable AND arguments.ci[i] NEQ ''>
+						<cfif x++>OR</cfif> [#arguments.ci[i]#] LIKE @gSrch
+					</cfif>					
 					</cfloop>
+				)
+				</cfif>
+				
+				<cfloop array="#arguments.where#" index="c">
+					<cfif x++>AND</cfif>
+						<cfif c["val"] NEQ 0>
+						#c.col# #c.op# <cfqueryparam value="#c.val#">
+						<cfelse>
+						#c.col# IS NULL
+						</cfif>
+				</cfloop>
+			</cfif>					
+			<cfset x = 0>
+			<cfloop collection="#columns#" item="k">
+				<cfif columns[k].search.value NEQ ''>
+					<cfif (arguments.search.value NEQ "" OR ArrayLen(arguments.where)) OR x++>AND<cfelse>WHERE</cfif>
+					(#arguments.ci[k+1]# = <cfqueryparam value="#columns[k].search.value#">)
+				</cfif>
+			</cfloop>
 		</cfquery>
 
 		<!--- Build --->
