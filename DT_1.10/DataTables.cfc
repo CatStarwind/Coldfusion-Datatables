@@ -16,7 +16,7 @@
 		<cfset var k = 0>
 		<cfset var c = "">
 		<cfset var jqdt = {"data"=[]}>	
-		<cfset var row = StructNew()>>
+		<cfset var row = StructNew()>
 
 		<!--- Get --->
 		<cfquery name="qryMain" datasource="#application.datasource#">
@@ -28,9 +28,9 @@
 					<cfif StructCount(arguments.order)>
 						ORDER BY
 						<cfloop from="0" to="#StructCount(arguments.order)-1#" index="i">
-							<cfset c = arguments.order[i].column+1>
+							<cfset c = arguments.order[i].column>
 							<cfif arguments.columns[c].orderable>
-								<cfif i GT 1>,</cfif> #arguments.ci[c]# #arguments.order[i].dir#
+								<cfif i>,</cfif> #arguments.ci[c+1]# #arguments.order[i].dir#
 							</cfif>
 						</cfloop>
 					</cfif>) AS R<cfif !(arguments.ci.indexOf(arguments.PK)+1)>, #arguments.PK#</cfif>
@@ -41,7 +41,7 @@
 				WHERE 1=1
 					<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
 						<cfif arguments.search.value NEQ "">
-						(
+						AND (
 							<cfset x = 0>
 							<cfloop from="1" to="#ArrayLen(arguments.ci)#" index="i">
 							<cfif arguments.columns[i-1].searchable AND arguments.ci[i] NEQ ''>
@@ -82,7 +82,7 @@
 			WHERE 1=1
 					<cfif arguments.search.value NEQ "" OR ArrayLen(arguments.where)>
 						<cfif arguments.search.value NEQ "">
-						(
+						AND (
 							<cfset x = 0>
 							<cfloop from="1" to="#ArrayLen(arguments.ci)#" index="i">
 							<cfif arguments.columns[i-1].searchable AND arguments.ci[i] NEQ ''>
