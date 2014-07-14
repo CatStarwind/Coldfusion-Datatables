@@ -15,7 +15,7 @@
 		<cfset var x = 0>
 		<cfset var k = 0>
 		<cfset var c = "">
-		<cfset var jqdt = {"data"=[]}>	
+		<cfset var jqdt = {"data"=[]}>
 		<cfset var row = StructNew()>
 
 		<!--- Get --->
@@ -26,13 +26,14 @@
 			FROM (
 				SELECT ROW_NUMBER() OVER(
 					<cfif StructCount(arguments.order)>
-						ORDER BY
+						<cfset x = 0>
 						<cfloop from="0" to="#StructCount(arguments.order)-1#" index="i">
 							<cfset c = arguments.order[i].column>
 							<cfif arguments.columns[c].orderable>
-								<cfif i>,</cfif> #arguments.ci[c+1]# #arguments.order[i].dir#
+								<cfif x++>,<cfelse>ORDER BY</cfif> #arguments.ci[c+1]# #arguments.order[i].dir#
 							</cfif>
 						</cfloop>
+						<cfif !x>ORDER BY #arguments.PK# ASC</cfif>
 					</cfif>) AS R<cfif !(arguments.ci.indexOf(arguments.PK)+1)>, #arguments.PK#</cfif>
 					, [#ArrayToList(ListToArray(ArrayToList(arguments.ci)), '],[')#]
 					<cfif ArrayLen(arguments.ext)>, [#ArrayToList(ListToArray(ArrayToList(arguments.ext)), '],[')#]</cfif>
