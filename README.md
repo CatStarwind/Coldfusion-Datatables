@@ -1,7 +1,8 @@
 Coldfusion-DataTables
 =======================
 
-Coldfusion(9+) CFC to handle server side processing of jQuery DataTables.
+Coldfusion CFC to handle server side processing of jQuery DataTables. Root files are DataTables v1.10.x and v1.9.x processing combined. The folders are dedicated files to each version, though might be outdated.
+
 ##DataTables v1.10.x (DT_1.10)##
 #####DataTables.cfc####
 #####DTCalls.cfc####
