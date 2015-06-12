@@ -215,11 +215,7 @@
 					
 					<cfset tempObj["col"] = params[2]>
 					<cfset tempObj["op"] = op>					
-					<cfif IsDate(arguments.args[k])>
-						<cfset tempObj["val"] = TimeStampFormat(arguments.args[k], true)>
-					<cfelse>
-						<cfset tempObj["val"] = arguments.args[k]>
-					</cfif>
+					<cfset tempObj["val"] = arguments.args[k]>
 					
 					<cfset ArrayAppend(arguments.args.where, tempObj)>
 					<cfset tempObj = StructNew()>
